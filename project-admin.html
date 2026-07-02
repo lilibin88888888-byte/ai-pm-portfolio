@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>个人中心 | Product Portfolio</title>
+    <meta name="description" content="用于编辑个人 AI 产品经理作品集全部内容的配置中心。" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body class="admin-body">
+    <header class="site-header">
+      <div class="brand">
+        <button class="avatar-button" type="button" id="avatarButton" aria-label="查看头像大图">
+          <img id="siteAvatar" src="" alt="个人头像" />
+          <span class="avatar-fallback">PM</span>
+        </button>
+        <a href="./index.html"><span>个人中心</span></a>
+      </div>
+      <nav class="nav" aria-label="个人中心导航">
+        <a href="./index.html">返回展示页</a>
+        <a href="#baseConfig">首页信息</a>
+        <a href="#resumeConfig">简历</a>
+        <a href="#projectConfigCard">项目</a>
+        <a href="#capabilityConfig">能力</a>
+        <a href="#thinkingConfig">思考</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="admin-hero section-band" id="adminGate">
+        <div>
+          <p class="eyebrow">Content Center</p>
+          <h1>个人中心</h1>
+          <p>
+            这里可以编辑展示页上的全部内容：首页定位、Agent 文案、项目案例、AI 产品能力、文章、联系方式。内容默认保存在当前浏览器本地。
+          </p>
+        </div>
+      </section>
+
+      <section class="center-layout section-band" id="centerApp">
+        <form class="project-form center-form" id="siteConfig">
+          <section class="config-card" id="baseConfig">
+            <p class="eyebrow">Home</p>
+            <h2>首页信息</h2>
+            <label>
+              头像上传
+              <input name="avatarFile" type="file" accept="image/*" />
+            </label>
+            <button class="secondary-button small" type="button" id="clearAvatar">清除头像</button>
+            <label>
+              顶部品牌名
+              <input name="brandName" type="text" />
+            </label>
+            <label>
+              首页主标题
+              <textarea name="heroTitle"></textarea>
+            </label>
+            <label>
+              首页介绍
+              <textarea name="heroSummary"></textarea>
+            </label>
+            <label>
+              首页主按钮文案
+              <input name="heroPrimaryLabel" type="text" />
+            </label>
+            <label>
+              首页标签，每行一个
+              <textarea name="heroTags"></textarea>
+            </label>
+          </section>
+
+          <section class="config-card" id="resumeConfig">
+            <p class="eyebrow">Resume</p>
+            <h2>简历与联系</h2>
+            <label>
+              简历区小标题
+              <input name="resumeEyebrow" type="text" />
+            </label>
+            <label>
+              简历区标题
+              <input name="resumeTitle" type="text" />
+            </label>
+            <label>
+              简历区介绍
+              <textarea name="resumeSummary"></textarea>
+            </label>
+            <div>
+              <div class="repeater-heading">
+                <h3>联系方式</h3>
+                <button class="secondary-button small" type="button" data-add="contacts">添加联系项</button>
+              </div>
+              <div class="repeater-list" id="contactsEditor"></div>
+            </div>
+            <div>
+              <div class="repeater-heading">
+                <h3>教育经历</h3>
+                <button class="secondary-button small" type="button" data-add="education">添加教育经历</button>
+              </div>
+              <div class="repeater-list" id="educationEditor"></div>
+            </div>
+            <div>
+              <div class="repeater-heading">
+                <h3>工作经历</h3>
+                <button class="secondary-button small" type="button" data-add="work">添加工作经历</button>
+              </div>
+              <div class="repeater-list" id="workEditor"></div>
+            </div>
+          </section>
+
+          <section class="config-card" id="agentConfig">
+            <p class="eyebrow">Hidden Module</p>
+            <h2>Agent 预留内容</h2>
+            <p class="form-hint">当前展示页已隐藏 Agent 模块，这里先保留配置，方便后续接入后恢复。</p>
+            <label>
+              Agent 区小标题
+              <input name="agentEyebrow" type="text" />
+            </label>
+            <label>
+              Agent 区标题
+              <input name="agentTitle" type="text" />
+            </label>
+            <label>
+              Agent 区介绍
+              <textarea name="agentSummary"></textarea>
+            </label>
+            <label>
+              Agent 状态文案
+              <input name="agentStatus" type="text" />
+            </label>
+            <label>
+              Agent 欢迎语
+              <textarea name="agentWelcome"></textarea>
+            </label>
+            <label>
+              Agent 推荐问题，每行一个
+              <textarea name="agentPrompts"></textarea>
+            </label>
+          </section>
+        </form>
+
+        <form class="project-form center-form" id="projectConfig">
+          <section class="config-card" id="projectConfigCard">
+            <p class="eyebrow">Case Studies</p>
+            <h2>项目作品集</h2>
+            <label>
+              项目区小标题
+              <input name="projectsEyebrow" type="text" />
+            </label>
+            <label>
+              项目区标题
+              <input name="projectsTitle" type="text" />
+            </label>
+            <label>
+              项目区介绍
+              <textarea name="projectsSummary"></textarea>
+            </label>
+            <div>
+              <div class="repeater-heading">
+                <h3>项目案例</h3>
+                <button class="secondary-button small" type="button" data-add="projects">添加项目</button>
+              </div>
+              <div class="repeater-list" id="projectsEditor"></div>
+            </div>
+          </section>
+
+          <section class="config-card" id="capabilityConfig">
+            <p class="eyebrow">Skill Map</p>
+            <h2>产品能力结构</h2>
+            <label>
+              能力区小标题
+              <input name="capabilitiesEyebrow" type="text" />
+            </label>
+            <label>
+              能力区标题
+              <input name="capabilitiesTitle" type="text" />
+            </label>
+            <label>
+              能力区介绍
+              <textarea name="capabilitiesSummary"></textarea>
+            </label>
+            <div>
+              <div class="repeater-heading">
+                <h3>能力卡片</h3>
+                <button class="secondary-button small" type="button" data-add="capabilities">添加能力</button>
+              </div>
+              <div class="repeater-list" id="capabilitiesEditor"></div>
+            </div>
+          </section>
+
+          <section class="config-card" id="thinkingConfig">
+            <p class="eyebrow">Product Notes</p>
+            <h2>产品思考</h2>
+            <label>
+              产品思考小标题
+              <input name="thinkingEyebrow" type="text" />
+            </label>
+            <label>
+              产品思考标题
+              <input name="thinkingTitle" type="text" />
+            </label>
+            <label>
+              产品思考介绍
+              <textarea name="thinkingSummary"></textarea>
+            </label>
+            <div>
+              <div class="repeater-heading">
+                <h3>产品思考</h3>
+                <button class="secondary-button small" type="button" data-add="notes">添加文章</button>
+              </div>
+              <div class="repeater-list" id="notesEditor"></div>
+            </div>
+          </section>
+        </form>
+
+        <aside class="admin-preview center-actions">
+          <p class="eyebrow">Actions</p>
+          <h2>保存与预览</h2>
+          <p>保存后回到展示页刷新即可看到新内容。图片会以浏览器本地数据保存，适合个人维护和 GitHub Pages 静态展示。</p>
+          <div class="form-actions vertical-actions">
+            <button class="primary-button" type="button" id="saveConfig">保存全部内容</button>
+            <a class="secondary-button" href="./index.html">预览展示页</a>
+            <button class="secondary-button" type="button" id="exportConfig">复制 site-config.json</button>
+            <button class="secondary-button" type="button" id="resetConfig">恢复默认内容</button>
+            <button class="secondary-button" type="button" id="logoutCenter">退出个人中心</button>
+          </div>
+          <p class="form-hint" id="configHint" aria-live="polite"></p>
+        </aside>
+      </section>
+    </main>
+
+    <dialog class="image-dialog" id="imageDialog">
+      <button class="image-close" type="button" id="closeImageDialog" aria-label="关闭大图">×</button>
+      <img id="imageDialogImg" src="" alt="大图预览" />
+    </dialog>
+
+    <footer class="site-footer">
+      <span>配置默认保存在当前浏览器本地。</span>
+      <a href="./index.html">返回首页</a>
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

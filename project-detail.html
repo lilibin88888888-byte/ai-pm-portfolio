@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>项目详情 | AI PM Portfolio</title>
+    <meta name="description" content="AI 产品经理作品集项目详情页。" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <button class="avatar-button" type="button" id="avatarButton" aria-label="查看头像大图">
+          <img id="siteAvatar" src="" alt="个人头像" />
+          <span class="avatar-fallback">PM</span>
+        </button>
+        <a href="./index.html"><span>AI PM Portfolio</span></a>
+      </div>
+      <nav class="nav" aria-label="项目详情导航">
+        <a href="./index.html#projects">返回项目</a>
+        <a href="./index.html#capabilities">能力</a>
+        <a href="./index.html#resume">简历</a>
+      </nav>
+      <div class="header-actions">
+        <button class="header-action secondary-header-action" type="button" id="openCenter">
+          <span class="button-icon icon-user"></span>个人中心
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="project-detail section-band" id="projectDetail"></section>
+    </main>
+
+    <footer class="site-footer">
+      <span>© 2026 Product Portfolio</span>
+      <a href="./index.html">返回首页</a>
+    </footer>
+
+    <dialog class="pass-dialog" id="passDialog">
+      <form class="pass-card" id="passForm" method="dialog">
+        <div>
+          <p class="eyebrow">Access</p>
+          <h2>进入个人中心</h2>
+          <p>请输入通行证。验证成功后可以编辑网站全部展示内容。</p>
+        </div>
+        <label>
+          通行证
+          <input id="passInput" type="password" placeholder="请输入通行证" autocomplete="current-password" />
+        </label>
+        <p class="form-hint" id="passHint" aria-live="polite"></p>
+        <div class="form-actions">
+          <button class="primary-button" type="submit">进入</button>
+          <button class="secondary-button" type="button" id="closePassDialog">取消</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="image-dialog" id="imageDialog">
+      <button class="image-close" type="button" id="closeImageDialog" aria-label="关闭大图">×</button>
+      <img id="imageDialogImg" src="" alt="大图预览" />
+    </dialog>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
