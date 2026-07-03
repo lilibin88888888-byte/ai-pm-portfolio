@@ -2,6 +2,8 @@ const CENTER_PASS = "6540064aa";
 const CONFIG_KEY = "portfolioConfig";
 const CENTER_AUTH_KEY = "portfolioCenterAuthedUntil";
 const PUBLISH_ENDPOINT_KEY = "portfolioPublishEndpoint";
+const PUBLISH_SECRET_KEY = "portfolioPublishSecret";
+const DEFAULT_PUBLISH_ENDPOINT = "https://ai-pm-portfolio-publisher.lilibin-ai-pm.workers.dev";
 const CONFIG_VERSION = 2;
 const CONFIG_URL = "./site-config.json";
 
@@ -822,9 +824,15 @@ function bindCenterActions() {
   const publishEndpoint = document.querySelector("#publishEndpoint");
   const publishSecret = document.querySelector("#publishSecret");
   if (publishEndpoint) {
-    publishEndpoint.value = localStorage.getItem(PUBLISH_ENDPOINT_KEY) || "";
+    publishEndpoint.value = localStorage.getItem(PUBLISH_ENDPOINT_KEY) || DEFAULT_PUBLISH_ENDPOINT;
     publishEndpoint.addEventListener("input", () => {
       localStorage.setItem(PUBLISH_ENDPOINT_KEY, publishEndpoint.value.trim());
+    });
+  }
+  if (publishSecret) {
+    publishSecret.value = localStorage.getItem(PUBLISH_SECRET_KEY) || "";
+    publishSecret.addEventListener("input", () => {
+      localStorage.setItem(PUBLISH_SECRET_KEY, publishSecret.value.trim());
     });
   }
   document.querySelector("[name='avatarFile']")?.addEventListener("change", async (event) => {
@@ -851,9 +859,9 @@ function bindCenterActions() {
       renderAllEditors();
     });
   });
-  document.querySelector("#saveConfig")?.addEventListener("click", () => {
+  document.querySelector("#localSaveConfig")?.addEventListener("click", () => {
     saveConfig(collectCenterConfig());
-    hint.textContent = "已保存到当前浏览器，可本机预览。要让其他人看到，请复制或下载 site-config.json 并提交到 GitHub。";
+    hint.textContent = "已保存到当前浏览器，可本机预览，但其他人暂时看不到。";
   });
   document.querySelector("#exportConfig")?.addEventListener("click", () => {
     navigator.clipboard?.writeText(JSON.stringify(collectCenterConfig(), null, 2));
@@ -867,13 +875,15 @@ function bindCenterActions() {
     const endpoint = publishEndpoint?.value.trim();
     const secret = publishSecret?.value.trim();
     if (!endpoint) {
-      hint.textContent = "请先填写 Worker 发布接口。";
+      hint.textContent = "缺少发布接口，请联系我检查配置。";
       return;
     }
     if (!secret) {
-      hint.textContent = "请先填写发布密钥。";
+      hint.textContent = "首次发布需要填写发布密钥。填写后会记住在当前浏览器里。";
       return;
     }
+    localStorage.setItem(PUBLISH_ENDPOINT_KEY, endpoint);
+    localStorage.setItem(PUBLISH_SECRET_KEY, secret);
     const button = document.querySelector("#publishConfig");
     button.disabled = true;
     hint.textContent = "正在发布到 GitHub...";

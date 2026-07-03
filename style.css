@@ -951,6 +951,20 @@ h3 {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76);
 }
 
+.advanced-publish {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.advanced-publish summary {
+  cursor: pointer;
+  list-style-position: inside;
+}
+
+.advanced-publish label {
+  margin-top: 12px;
+}
+
 .json-area {
   min-height: 280px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
