@@ -215,18 +215,9 @@
         <aside class="admin-preview center-actions">
           <p class="eyebrow">Actions</p>
           <h2>保存与预览</h2>
-          <p>这里的保存只会更新当前浏览器的本机预览。要让所有人看到修改，需要把生成的 site-config.json 提交到 GitHub 仓库。</p>
-          <div class="form-actions vertical-actions">
-            <button class="primary-button" type="button" id="saveConfig">保存到本机预览</button>
-            <button class="primary-button" type="button" id="publishConfig">保存并发布到 GitHub</button>
-            <a class="secondary-button" href="./index.html">预览展示页</a>
-            <button class="secondary-button" type="button" id="exportConfig">复制 site-config.json</button>
-            <button class="secondary-button" type="button" id="downloadConfig">下载 site-config.json</button>
-            <a class="secondary-button" href="https://github.com/lilibin88888888-byte/ai-pm-portfolio/edit/main/site-config.json" target="_blank" rel="noopener">去 GitHub 更新配置</a>
-            <button class="secondary-button" type="button" id="resetConfig">恢复默认内容</button>
-            <button class="secondary-button" type="button" id="logoutCenter">退出个人中心</button>
-          </div>
+          <p>填写 Worker 发布接口和发布密钥后，点击发布即可把当前配置写入 GitHub，让所有人看到最新内容。</p>
           <div class="publish-settings" aria-label="发布配置">
+            <h3>发布到 GitHub</h3>
             <label>
               Worker 发布接口
               <input id="publishEndpoint" type="url" placeholder="https://你的-worker.workers.dev" autocomplete="off" />
@@ -235,6 +226,16 @@
               发布密钥
               <input id="publishSecret" type="password" placeholder="Cloudflare Worker 的 PUBLISH_SECRET" autocomplete="current-password" />
             </label>
+          </div>
+          <div class="form-actions vertical-actions">
+            <button class="primary-button" type="button" id="saveConfig">保存到本机预览</button>
+            <button class="primary-button" type="button" id="publishConfig">保存并发布到 GitHub</button>
+            <a class="secondary-button" href="./index.html">预览展示页</a>
+            <button class="secondary-button" type="button" id="exportConfig">复制 site-config.json</button>
+            <button class="secondary-button" type="button" id="downloadConfig">下载 site-config.json</button>
+            <a class="secondary-button" href="https://github.com/lilibin88888888-byte/ai-pm-portfolio/edit/main/site-config.json" target="_blank" rel="noopener">备用：手动更新 GitHub</a>
+            <button class="secondary-button" type="button" id="resetConfig">恢复默认内容</button>
+            <button class="secondary-button" type="button" id="logoutCenter">退出个人中心</button>
           </div>
           <p class="form-hint" id="configHint" aria-live="polite"></p>
         </aside>
