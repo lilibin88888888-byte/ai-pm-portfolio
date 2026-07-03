@@ -7,6 +7,20 @@ const DEFAULT_PUBLISH_ENDPOINT = "https://ai-pm-portfolio-publisher.lilibin-ai-p
 const CONFIG_VERSION = 2;
 const CONFIG_URL = "./site-config.json";
 
+function resolvePublishEndpoint() {
+  const stored = localStorage.getItem(PUBLISH_ENDPOINT_KEY) || "";
+  try {
+    const url = new URL(stored);
+    if (url.protocol === "https:" && url.hostname.endsWith(".workers.dev")) {
+      return stored;
+    }
+  } catch (error) {
+    // Ignore stale local values from earlier setup attempts.
+  }
+  localStorage.setItem(PUBLISH_ENDPOINT_KEY, DEFAULT_PUBLISH_ENDPOINT);
+  return DEFAULT_PUBLISH_ENDPOINT;
+}
+
 const defaultConfig = {
   version: CONFIG_VERSION,
   brandName: "李婧斐 - AI 产品经理简历",
@@ -824,7 +838,7 @@ function bindCenterActions() {
   const publishEndpoint = document.querySelector("#publishEndpoint");
   const publishSecret = document.querySelector("#publishSecret");
   if (publishEndpoint) {
-    publishEndpoint.value = localStorage.getItem(PUBLISH_ENDPOINT_KEY) || DEFAULT_PUBLISH_ENDPOINT;
+    publishEndpoint.value = resolvePublishEndpoint();
     publishEndpoint.addEventListener("input", () => {
       localStorage.setItem(PUBLISH_ENDPOINT_KEY, publishEndpoint.value.trim());
     });
@@ -895,7 +909,9 @@ function bindCenterActions() {
         ? `已发布到 GitHub。GitHub Pages 稍后会更新：<a href="${result.commit}" target="_blank" rel="noopener">查看提交</a>`
         : "已发布到 GitHub。GitHub Pages 稍后会更新。";
     } catch (error) {
-      hint.textContent = error.message || "发布失败，请检查 Worker 地址、发布密钥和 GitHub Token。";
+      hint.textContent = error.message === "Failed to fetch"
+        ? "发布接口连接失败。请刷新页面后重试，或展开高级设置检查 Worker 地址。"
+        : error.message || "发布失败，请检查 Worker 地址、发布密钥和 GitHub Token。";
     } finally {
       button.disabled = false;
     }
