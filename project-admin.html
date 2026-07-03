@@ -215,11 +215,13 @@
         <aside class="admin-preview center-actions">
           <p class="eyebrow">Actions</p>
           <h2>保存与预览</h2>
-          <p>保存后回到展示页刷新即可看到新内容。图片会以浏览器本地数据保存，适合个人维护和 GitHub Pages 静态展示。</p>
+          <p>这里的保存只会更新当前浏览器的本机预览。要让所有人看到修改，需要把生成的 site-config.json 提交到 GitHub 仓库。</p>
           <div class="form-actions vertical-actions">
-            <button class="primary-button" type="button" id="saveConfig">保存全部内容</button>
+            <button class="primary-button" type="button" id="saveConfig">保存到本机预览</button>
             <a class="secondary-button" href="./index.html">预览展示页</a>
             <button class="secondary-button" type="button" id="exportConfig">复制 site-config.json</button>
+            <button class="secondary-button" type="button" id="downloadConfig">下载 site-config.json</button>
+            <a class="secondary-button" href="https://github.com/lilibin88888888-byte/ai-pm-portfolio/edit/main/site-config.json" target="_blank" rel="noopener">去 GitHub 更新配置</a>
             <button class="secondary-button" type="button" id="resetConfig">恢复默认内容</button>
             <button class="secondary-button" type="button" id="logoutCenter">退出个人中心</button>
           </div>

@@ -230,6 +230,18 @@ function saveConfig(config) {
   localStorage.setItem(CONFIG_KEY, JSON.stringify(normalizeConfig(config), null, 2));
 }
 
+function downloadTextFile(filename, content) {
+  const blob = new Blob([content], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 function setText(selector, text) {
   const element = document.querySelector(selector);
   if (element && text !== undefined) element.textContent = text;
@@ -816,11 +828,15 @@ function bindCenterActions() {
   });
   document.querySelector("#saveConfig")?.addEventListener("click", () => {
     saveConfig(collectCenterConfig());
-    hint.textContent = "已保存。回到展示页刷新即可看到更新。";
+    hint.textContent = "已保存到当前浏览器，可本机预览。要让其他人看到，请复制或下载 site-config.json 并提交到 GitHub。";
   });
   document.querySelector("#exportConfig")?.addEventListener("click", () => {
     navigator.clipboard?.writeText(JSON.stringify(collectCenterConfig(), null, 2));
-    hint.textContent = "整站 JSON 已复制。";
+    hint.textContent = "site-config.json 内容已复制。请到 GitHub 替换同名文件并提交。";
+  });
+  document.querySelector("#downloadConfig")?.addEventListener("click", () => {
+    downloadTextFile("site-config.json", JSON.stringify(collectCenterConfig(), null, 2));
+    hint.textContent = "site-config.json 已下载。请上传或替换到 GitHub 仓库根目录。";
   });
   document.querySelector("#resetConfig")?.addEventListener("click", () => {
     editorState = clone(defaultConfig);
