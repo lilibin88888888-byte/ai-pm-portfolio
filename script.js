@@ -1,6 +1,7 @@
 const CENTER_PASS = "6540064aa";
 const CONFIG_KEY = "portfolioConfig";
 const CENTER_AUTH_KEY = "portfolioCenterAuthedUntil";
+const PUBLISH_ENDPOINT_KEY = "portfolioPublishEndpoint";
 const CONFIG_VERSION = 2;
 const CONFIG_URL = "./site-config.json";
 
@@ -240,6 +241,22 @@ function downloadTextFile(filename, content) {
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
+}
+
+async function publishToGithub(config, endpoint, secret) {
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${secret}`,
+    },
+    body: JSON.stringify({ config }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data.ok === false) {
+    throw new Error(data.error || `发布失败：${response.status}`);
+  }
+  return data;
 }
 
 function setText(selector, text) {
@@ -802,6 +819,14 @@ function collectCenterConfig() {
 
 function bindCenterActions() {
   const hint = document.querySelector("#configHint");
+  const publishEndpoint = document.querySelector("#publishEndpoint");
+  const publishSecret = document.querySelector("#publishSecret");
+  if (publishEndpoint) {
+    publishEndpoint.value = localStorage.getItem(PUBLISH_ENDPOINT_KEY) || "";
+    publishEndpoint.addEventListener("input", () => {
+      localStorage.setItem(PUBLISH_ENDPOINT_KEY, publishEndpoint.value.trim());
+    });
+  }
   document.querySelector("[name='avatarFile']")?.addEventListener("change", async (event) => {
     if (event.target.files[0]) {
       editorState.avatar = await fileToDataUrl(event.target.files[0]);
@@ -837,6 +862,33 @@ function bindCenterActions() {
   document.querySelector("#downloadConfig")?.addEventListener("click", () => {
     downloadTextFile("site-config.json", JSON.stringify(collectCenterConfig(), null, 2));
     hint.textContent = "site-config.json 已下载。请上传或替换到 GitHub 仓库根目录。";
+  });
+  document.querySelector("#publishConfig")?.addEventListener("click", async () => {
+    const endpoint = publishEndpoint?.value.trim();
+    const secret = publishSecret?.value.trim();
+    if (!endpoint) {
+      hint.textContent = "请先填写 Worker 发布接口。";
+      return;
+    }
+    if (!secret) {
+      hint.textContent = "请先填写发布密钥。";
+      return;
+    }
+    const button = document.querySelector("#publishConfig");
+    button.disabled = true;
+    hint.textContent = "正在发布到 GitHub...";
+    try {
+      const config = collectCenterConfig();
+      saveConfig(config);
+      const result = await publishToGithub(config, endpoint, secret);
+      hint.innerHTML = result.commit
+        ? `已发布到 GitHub。GitHub Pages 稍后会更新：<a href="${result.commit}" target="_blank" rel="noopener">查看提交</a>`
+        : "已发布到 GitHub。GitHub Pages 稍后会更新。";
+    } catch (error) {
+      hint.textContent = error.message || "发布失败，请检查 Worker 地址、发布密钥和 GitHub Token。";
+    } finally {
+      button.disabled = false;
+    }
   });
   document.querySelector("#resetConfig")?.addEventListener("click", () => {
     editorState = clone(defaultConfig);

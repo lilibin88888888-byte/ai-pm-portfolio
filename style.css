@@ -926,6 +926,31 @@ h3 {
   flex-wrap: wrap;
 }
 
+.publish-settings {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.58);
+  padding-top: 18px;
+}
+
+.publish-settings label {
+  display: grid;
+  gap: 8px;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.publish-settings input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 16px;
+  padding: 12px 13px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76);
+}
+
 .json-area {
   min-height: 280px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
