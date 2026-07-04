@@ -599,6 +599,31 @@ function bindCenterGate() {
   });
 }
 
+function bindMobileMenu() {
+  const header = document.querySelector(".site-header");
+  const button = document.querySelector("#mobileMenuButton");
+  const menu = document.querySelector("#mobileHeaderMenu");
+  if (!header || !button || !menu) return;
+
+  const setOpen = (open) => {
+    header.classList.toggle("menu-open", open);
+    button.setAttribute("aria-expanded", String(open));
+    button.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+  };
+
+  button.addEventListener("click", () => {
+    setOpen(!header.classList.contains("menu-open"));
+  });
+
+  menu.querySelectorAll("a, button").forEach((item) => {
+    item.addEventListener("click", () => setOpen(false));
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setOpen(false);
+  });
+}
+
 function isCenterAuthed() {
   return Number(localStorage.getItem(CENTER_AUTH_KEY) || 0) > Date.now();
 }
@@ -977,6 +1002,7 @@ async function init() {
   renderProjectDetail();
   bindAgentForm();
   bindImageDialog();
+  bindMobileMenu();
   bindCenterGate();
   bindCenterPage();
 }

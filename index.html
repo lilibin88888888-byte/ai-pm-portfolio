@@ -19,17 +19,24 @@
         </button>
         <a href="#top" aria-label="返回首页"><span>Product Portfolio</span></a>
       </div>
-      <nav class="nav" aria-label="主导航">
-        <a href="#resume">简历</a>
-        <a href="#projects">项目</a>
-        <a href="#capabilities">能力</a>
-        <a href="#thinking" hidden>思考</a>
-      </nav>
-      <div class="header-actions">
-        <a class="header-action" href="#agent" hidden><span class="button-icon icon-spark"></span>AI Agent</a>
-        <button class="header-action secondary-header-action" type="button" id="openCenter">
-          <span class="button-icon icon-user"></span>个人中心
-        </button>
+      <button class="mobile-menu-button" type="button" id="mobileMenuButton" aria-expanded="false" aria-controls="mobileHeaderMenu" aria-label="打开菜单">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="header-menu" id="mobileHeaderMenu">
+        <nav class="nav" aria-label="主导航">
+          <a href="#resume">简历</a>
+          <a href="#projects">项目</a>
+          <a href="#capabilities">能力</a>
+          <a href="#thinking" hidden>思考</a>
+        </nav>
+        <div class="header-actions">
+          <a class="header-action" href="#agent" hidden><span class="button-icon icon-spark"></span>AI Agent</a>
+          <button class="header-action secondary-header-action" type="button" id="openCenter">
+            <span class="button-icon icon-user"></span>个人中心
+          </button>
+        </div>
       </div>
     </header>
 
