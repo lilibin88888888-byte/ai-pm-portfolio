@@ -1,4 +1,5 @@
 const TARGET_PATH = "site-config.json";
+const RESUME_PATH = "assets/resume.pdf";
 
 function jsonResponse(request, env, data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -65,6 +66,39 @@ async function githubRequest(env, path, options = {}) {
   return data;
 }
 
+function dataUrlToBase64(dataUrl) {
+  const match = String(dataUrl || "").match(/^data:application\/pdf(?:;[^,]*)?;base64,(.+)$/);
+  if (!match) {
+    throw new Error("Invalid resume PDF file");
+  }
+  return match[1];
+}
+
+async function putGithubContent(env, filePath, branch, content, message) {
+  const owner = env.GITHUB_OWNER;
+  const repo = env.GITHUB_REPO;
+  const path = `/repos/${owner}/${repo}/contents/${filePath}`;
+  let sha = "";
+  try {
+    const current = await githubRequest(env, `${path}?ref=${encodeURIComponent(branch)}`);
+    sha = current.sha || "";
+  } catch (error) {
+    if (!String(error.message || "").includes("Not Found")) {
+      throw error;
+    }
+  }
+
+  return githubRequest(env, path, {
+    method: "PUT",
+    body: JSON.stringify({
+      branch,
+      content,
+      message,
+      ...(sha ? { sha } : {}),
+    }),
+  });
+}
+
 async function publishConfig(request, env) {
   assertEnv(env);
   if (!isAuthorized(request, env)) {
@@ -73,25 +107,18 @@ async function publishConfig(request, env) {
 
   const body = await request.json();
   const config = body.config;
+  const resumeFile = body.resumeFile;
   if (!config || typeof config !== "object" || !Array.isArray(config.projects)) {
     return jsonResponse(request, env, { ok: false, error: "Invalid site config" }, 400);
   }
 
   const branch = env.GITHUB_BRANCH || "main";
-  const owner = env.GITHUB_OWNER;
-  const repo = env.GITHUB_REPO;
-  const filePath = `/repos/${owner}/${repo}/contents/${TARGET_PATH}`;
-  const current = await githubRequest(env, `${filePath}?ref=${encodeURIComponent(branch)}`);
+  if (resumeFile?.dataUrl) {
+    await putGithubContent(env, RESUME_PATH, branch, dataUrlToBase64(resumeFile.dataUrl), `Update ${RESUME_PATH} from portfolio center`);
+  }
+
   const content = `${JSON.stringify(config, null, 2)}\n`;
-  const result = await githubRequest(env, filePath, {
-    method: "PUT",
-    body: JSON.stringify({
-      branch,
-      content: encodeBase64(content),
-      message: `Update ${TARGET_PATH} from portfolio center`,
-      sha: current.sha,
-    }),
-  });
+  const result = await putGithubContent(env, TARGET_PATH, branch, encodeBase64(content), `Update ${TARGET_PATH} from portfolio center`);
 
   return jsonResponse(request, env, {
     ok: true,

@@ -4,8 +4,11 @@ const CENTER_AUTH_KEY = "portfolioCenterAuthedUntil";
 const PUBLISH_ENDPOINT_KEY = "portfolioPublishEndpoint";
 const PUBLISH_SECRET_KEY = "portfolioPublishSecret";
 const DEFAULT_PUBLISH_ENDPOINT = "https://ai-pm-portfolio-publisher.lilibin-ai-pm.workers.dev";
+const RESUME_ASSET_PATH = "./assets/resume.pdf";
+const RESUME_DOWNLOAD_NAME = "李丽斌-产品经理.pdf";
 const CONFIG_VERSION = 2;
 const CONFIG_URL = "./site-config.json";
+let pendingResumeFile = null;
 
 function resolvePublishEndpoint() {
   const stored = localStorage.getItem(PUBLISH_ENDPOINT_KEY) || "";
@@ -183,7 +186,7 @@ const defaultConfig = {
   contacts: [
     { label: "15708464600", url: "tel:15708464600" },
     { label: "15708464600@163.com", url: "mailto:15708464600@163.com" },
-    { label: "下载简历", url: "./assets/resume.pdf", primary: true, download: true },
+    { label: "下载简历", url: RESUME_ASSET_PATH, primary: true, download: RESUME_DOWNLOAD_NAME },
   ],
 };
 
@@ -239,6 +242,10 @@ function normalizeConfig(config) {
   }));
   config.resume.education = config.resume.education || [];
   config.resume.work = config.resume.work || [];
+  config.contacts = (config.contacts || []).map((contact) => ({
+    ...contact,
+    download: contact.download === true ? RESUME_DOWNLOAD_NAME : contact.download,
+  }));
   config.avatar = config.avatar || "";
   return config;
 }
@@ -259,14 +266,14 @@ function downloadTextFile(filename, content) {
   URL.revokeObjectURL(url);
 }
 
-async function publishToGithub(config, endpoint, secret) {
+async function publishToGithub(config, endpoint, secret, resumeFile) {
   const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       authorization: `Bearer ${secret}`,
     },
-    body: JSON.stringify({ config }),
+    body: JSON.stringify({ config, resumeFile }),
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok || data.ok === false) {
@@ -466,7 +473,7 @@ function renderContacts(contacts) {
     ...contacts.map((contact) => {
       const link = createElement("a", contact.primary ? "primary-button small" : "", contact.label);
       link.href = contact.url || "#";
-      if (contact.download) link.setAttribute("download", "");
+      if (contact.download) link.setAttribute("download", contact.download === true ? RESUME_DOWNLOAD_NAME : contact.download);
       return link;
     }),
   );
@@ -677,6 +684,20 @@ function field(labelText, value, onInput, tag = "input") {
   return label;
 }
 
+function isResumeContact(item) {
+  return !!item.download || item.label === "下载简历";
+}
+
+function ensureResumeContact() {
+  let contact = editorState.contacts.find(isResumeContact);
+  if (!contact) {
+    contact = { label: "下载简历", url: RESUME_ASSET_PATH, primary: true, download: RESUME_DOWNLOAD_NAME };
+    editorState.contacts.push(contact);
+  }
+  contact.download = contact.download === true ? RESUME_DOWNLOAD_NAME : contact.download || RESUME_DOWNLOAD_NAME;
+  return contact;
+}
+
 function renderContactsEditor() {
   const box = document.querySelector("#contactsEditor");
   if (!box) return;
@@ -686,17 +707,32 @@ function renderContactsEditor() {
         editorState.contacts.splice(index, 1);
         renderContactsEditor();
       });
-      card.append(
-        field("名称", item.label, (value) => (item.label = value)),
-        field("链接", item.url, (value) => (item.url = value)),
-      );
-      const primary = createElement("label", "checkbox-label");
-      const checkbox = createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = !!item.primary;
-      checkbox.addEventListener("change", () => (item.primary = checkbox.checked));
-      primary.append(checkbox, document.createTextNode("按钮样式"));
-      card.append(primary);
+      card.append(field("名称", item.label, (value) => (item.label = value)));
+      if (isResumeContact(item)) {
+        const upload = createElement("label");
+        upload.append(document.createTextNode("简历 PDF 文件"));
+        const input = createElement("input");
+        input.type = "file";
+        input.accept = "application/pdf,.pdf";
+        input.addEventListener("change", async () => {
+          const file = input.files[0];
+          if (!file) return;
+          pendingResumeFile = {
+            name: file.name || RESUME_DOWNLOAD_NAME,
+            type: file.type || "application/pdf",
+            dataUrl: await fileToDataUrl(file),
+          };
+          item.url = pendingResumeFile.dataUrl;
+          item.download = pendingResumeFile.name;
+          renderContactsEditor();
+        });
+        upload.append(input);
+        card.append(upload);
+        const currentFile = createElement("p", "editor-muted", pendingResumeFile?.name || item.download || "当前线上文件：assets/resume.pdf");
+        card.append(currentFile);
+      } else {
+        card.append(field("链接", item.url, (value) => (item.url = value)));
+      }
       return card;
     }),
   );
@@ -821,6 +857,11 @@ function collectCenterConfig() {
   editorState.resume.summary = siteForm.elements.resumeSummary.value.trim();
   editorState.resume.eyebrow = siteForm.elements.resumeEyebrow.value.trim();
   editorState.resume.title = siteForm.elements.resumeTitle.value.trim();
+  const resumeContact = ensureResumeContact();
+  if (pendingResumeFile) {
+    resumeContact.url = RESUME_ASSET_PATH;
+    resumeContact.download = pendingResumeFile.name || RESUME_DOWNLOAD_NAME;
+  }
   editorState.projectsSection.eyebrow = projectForm.elements.projectsEyebrow.value.trim();
   editorState.projectsSection.title = projectForm.elements.projectsTitle.value.trim();
   editorState.projectsSection.summary = projectForm.elements.projectsSummary.value.trim();
@@ -904,7 +945,8 @@ function bindCenterActions() {
     try {
       const config = collectCenterConfig();
       saveConfig(config);
-      const result = await publishToGithub(config, endpoint, secret);
+      const result = await publishToGithub(config, endpoint, secret, pendingResumeFile);
+      pendingResumeFile = null;
       hint.innerHTML = result.commit
         ? `已发布到 GitHub。GitHub Pages 稍后会更新：<a href="${result.commit}" target="_blank" rel="noopener">查看提交</a>`
         : "已发布到 GitHub。GitHub Pages 稍后会更新。";

@@ -186,7 +186,7 @@
       "label": "下载简历",
       "url": "./assets/resume.pdf",
       "primary": true,
-      "download": true
+      "download": "李丽斌-产品经理.pdf"
     }
   ]
 }
