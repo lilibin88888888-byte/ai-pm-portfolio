@@ -9,6 +9,8 @@ const RESUME_DOWNLOAD_NAME = "李丽斌-产品经理.pdf";
 const CONFIG_VERSION = 2;
 const CONFIG_URL = "./site-config.json";
 let pendingResumeFile = null;
+let pendingAvatarFile = null;
+let avatarShouldClear = false;
 
 function resolvePublishEndpoint() {
   const stored = localStorage.getItem(PUBLISH_ENDPOINT_KEY) || "";
@@ -251,7 +253,12 @@ function normalizeConfig(config) {
 }
 
 function saveConfig(config) {
-  localStorage.setItem(CONFIG_KEY, JSON.stringify(normalizeConfig(config), null, 2));
+  try {
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(normalizeConfig(config), null, 2));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function downloadTextFile(filename, content) {
@@ -266,14 +273,14 @@ function downloadTextFile(filename, content) {
   URL.revokeObjectURL(url);
 }
 
-async function publishToGithub(config, endpoint, secret, resumeFile) {
+async function publishToGithub(config, endpoint, secret, files = {}) {
   const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       authorization: `Bearer ${secret}`,
     },
-    body: JSON.stringify({ config, resumeFile }),
+    body: JSON.stringify({ config, ...files }),
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok || data.ok === false) {
@@ -916,16 +923,26 @@ function bindCenterActions() {
     });
   }
   document.querySelector("[name='avatarFile']")?.addEventListener("change", async (event) => {
-    if (event.target.files[0]) {
-      editorState.avatar = await fileToDataUrl(event.target.files[0]);
+    const file = event.target.files[0];
+    if (file) {
+      const dataUrl = await fileToDataUrl(file);
+      pendingAvatarFile = {
+        name: file.name || "avatar",
+        type: file.type || "image/jpeg",
+        dataUrl,
+      };
+      avatarShouldClear = false;
+      editorState.avatar = dataUrl;
       renderAvatar(editorState);
-      hint.textContent = "头像已载入，点击保存后生效。";
+      hint.textContent = "头像已载入，点击保存并发布后其他人就能看到。";
     }
   });
   document.querySelector("#clearAvatar")?.addEventListener("click", () => {
+    pendingAvatarFile = null;
+    avatarShouldClear = true;
     editorState.avatar = "";
     renderAvatar(editorState);
-    hint.textContent = "头像已清除，点击保存后生效。";
+    hint.textContent = "头像已清除，点击保存并发布后线上头像会被清除。";
   });
   document.querySelectorAll("[data-add]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -940,8 +957,10 @@ function bindCenterActions() {
     });
   });
   document.querySelector("#localSaveConfig")?.addEventListener("click", () => {
-    saveConfig(collectCenterConfig());
-    hint.textContent = "已保存到当前浏览器，可本机预览，但其他人暂时看不到。";
+    const saved = saveConfig(collectCenterConfig());
+    hint.textContent = saved
+      ? "已保存到当前浏览器，可本机预览，但其他人暂时看不到。"
+      : "本机存储空间不足。请使用主保存按钮发布到 GitHub，或压缩图片后再试。";
   });
   document.querySelector("#exportConfig")?.addEventListener("click", () => {
     navigator.clipboard?.writeText(JSON.stringify(collectCenterConfig(), null, 2));
@@ -969,9 +988,21 @@ function bindCenterActions() {
     hint.textContent = "正在发布到 GitHub...";
     try {
       const config = collectCenterConfig();
-      saveConfig(config);
-      const result = await publishToGithub(config, endpoint, secret, pendingResumeFile);
+      const result = await publishToGithub(config, endpoint, secret, {
+        resumeFile: pendingResumeFile,
+        avatarFile: pendingAvatarFile,
+        clearAvatar: avatarShouldClear,
+      });
+      if (result.config) {
+        editorState = normalizeConfig(result.config);
+        saveConfig(editorState);
+        renderAvatar(editorState);
+      } else {
+        saveConfig(config);
+      }
       pendingResumeFile = null;
+      pendingAvatarFile = null;
+      avatarShouldClear = false;
       hint.innerHTML = result.commit
         ? `已发布到 GitHub。GitHub Pages 稍后会更新：<a href="${result.commit}" target="_blank" rel="noopener">查看提交</a>`
         : "已发布到 GitHub。GitHub Pages 稍后会更新。";

@@ -1,5 +1,6 @@
 const TARGET_PATH = "site-config.json";
 const RESUME_PATH = "assets/resume.pdf";
+const AVATAR_BASE_PATH = "assets/avatar";
 
 function jsonResponse(request, env, data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -74,6 +75,35 @@ function dataUrlToBase64(dataUrl) {
   return match[1];
 }
 
+function imageDataUrlToAsset(dataUrl) {
+  const match = String(dataUrl || "").match(/^data:image\/(png|jpe?g|webp|gif)(?:;[^,]*)?;base64,(.+)$/i);
+  if (!match) {
+    throw new Error("Invalid avatar image file");
+  }
+  const extension = match[1].toLowerCase().replace("jpeg", "jpg");
+  return {
+    path: `${AVATAR_BASE_PATH}.${extension}`,
+    content: match[2],
+  };
+}
+
+function decodeBase64Text(value) {
+  const binary = atob(String(value || "").replace(/\s/g, ""));
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return new TextDecoder().decode(bytes);
+}
+
+async function getGithubJson(env, filePath, branch) {
+  const owner = env.GITHUB_OWNER;
+  const repo = env.GITHUB_REPO;
+  const path = `/repos/${owner}/${repo}/contents/${filePath}`;
+  const current = await githubRequest(env, `${path}?ref=${encodeURIComponent(branch)}`);
+  return JSON.parse(decodeBase64Text(current.content || ""));
+}
+
 async function putGithubContent(env, filePath, branch, content, message) {
   const owner = env.GITHUB_OWNER;
   const repo = env.GITHUB_REPO;
@@ -108,13 +138,33 @@ async function publishConfig(request, env) {
   const body = await request.json();
   const config = body.config;
   const resumeFile = body.resumeFile;
+  const avatarFile = body.avatarFile;
+  const clearAvatar = body.clearAvatar === true;
   if (!config || typeof config !== "object" || !Array.isArray(config.projects)) {
     return jsonResponse(request, env, { ok: false, error: "Invalid site config" }, 400);
   }
 
   const branch = env.GITHUB_BRANCH || "main";
+  let currentConfig = null;
+  try {
+    currentConfig = await getGithubJson(env, TARGET_PATH, branch);
+  } catch {
+    currentConfig = null;
+  }
+
   if (resumeFile?.dataUrl) {
     await putGithubContent(env, RESUME_PATH, branch, dataUrlToBase64(resumeFile.dataUrl), `Update ${RESUME_PATH} from portfolio center`);
+  }
+
+  const avatarSource = avatarFile?.dataUrl || (String(config.avatar || "").startsWith("data:image/") ? config.avatar : "");
+  if (avatarSource) {
+    const avatar = imageDataUrlToAsset(avatarSource);
+    await putGithubContent(env, avatar.path, branch, avatar.content, `Update ${avatar.path} from portfolio center`);
+    config.avatar = `./${avatar.path}`;
+  } else if (clearAvatar) {
+    config.avatar = "";
+  } else if (!config.avatar && currentConfig?.avatar) {
+    config.avatar = currentConfig.avatar;
   }
 
   const content = `${JSON.stringify(config, null, 2)}\n`;
@@ -124,6 +174,7 @@ async function publishConfig(request, env) {
     ok: true,
     commit: result.commit?.html_url || "",
     content: result.content?.html_url || "",
+    config,
   });
 }
 
