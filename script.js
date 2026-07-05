@@ -3,7 +3,8 @@ const CONFIG_KEY = "portfolioConfig";
 const CENTER_AUTH_KEY = "portfolioCenterAuthedUntil";
 const PUBLISH_ENDPOINT_KEY = "portfolioPublishEndpoint";
 const PUBLISH_SECRET_KEY = "portfolioPublishSecret";
-const DEFAULT_PUBLISH_ENDPOINT = "https://ai-pm-portfolio-publisher.lilibin-ai-pm.workers.dev";
+const DEFAULT_PUBLISH_ENDPOINT = "https://ai-pm-portfolio-publisher.vercel.app/api/publish";
+const LEGACY_PUBLISH_ENDPOINTS = ["https://ai-pm-portfolio-publisher.lilibin-ai-pm.workers.dev"];
 const RESUME_ASSET_PATH = "./assets/resume.pdf";
 const RESUME_DOWNLOAD_NAME = "李丽斌-产品经理.pdf";
 const CONFIG_VERSION = 2;
@@ -13,10 +14,10 @@ let pendingAvatarFile = null;
 let avatarShouldClear = false;
 
 function resolvePublishEndpoint() {
-  const stored = localStorage.getItem(PUBLISH_ENDPOINT_KEY) || "";
+  const stored = (localStorage.getItem(PUBLISH_ENDPOINT_KEY) || "").trim().replace(/\/$/, "");
   try {
     const url = new URL(stored);
-    if (url.protocol === "https:" && url.hostname.endsWith(".workers.dev")) {
+    if (url.protocol === "https:" && !LEGACY_PUBLISH_ENDPOINTS.includes(stored)) {
       return stored;
     }
   } catch (error) {
