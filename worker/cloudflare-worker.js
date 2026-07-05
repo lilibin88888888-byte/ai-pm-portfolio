@@ -92,6 +92,23 @@ function imageDataUrlToAsset(dataUrl) {
   };
 }
 
+function withVersion(path, version) {
+  const cleanPath = String(path || "").split("?")[0];
+  return `${cleanPath}?v=${version}`;
+}
+
+function isResumeContact(contact) {
+  return Boolean(contact?.primary || String(contact?.url || "").includes(RESUME_PATH) || String(contact?.download || "").includes(".pdf"));
+}
+
+function versionResumeContact(config, version, downloadName) {
+  if (!Array.isArray(config.contacts)) return;
+  const contact = config.contacts.find(isResumeContact);
+  if (!contact) return;
+  contact.url = withVersion(`./${RESUME_PATH}`, version);
+  contact.download = downloadName || contact.download || "resume.pdf";
+}
+
 function decodeBase64Text(value) {
   const binary = atob(String(value || "").replace(/\s/g, ""));
   const bytes = new Uint8Array(binary.length);
@@ -150,6 +167,7 @@ async function publishConfig(request, env) {
   }
 
   const branch = env.GITHUB_BRANCH || "main";
+  const assetVersion = Date.now();
   let currentConfig = null;
   try {
     currentConfig = await getGithubJson(env, TARGET_PATH, branch);
@@ -159,13 +177,14 @@ async function publishConfig(request, env) {
 
   if (resumeFile?.dataUrl) {
     await putGithubContent(env, RESUME_PATH, branch, dataUrlToBase64(resumeFile.dataUrl), `Update ${RESUME_PATH} from portfolio center`);
+    versionResumeContact(config, assetVersion, resumeFile.name);
   }
 
   const avatarSource = avatarFile?.dataUrl || (String(config.avatar || "").startsWith("data:image/") ? config.avatar : "");
   if (avatarSource) {
     const avatar = imageDataUrlToAsset(avatarSource);
     await putGithubContent(env, avatar.path, branch, avatar.content, `Update ${avatar.path} from portfolio center`);
-    config.avatar = `./${avatar.path}`;
+    config.avatar = withVersion(`./${avatar.path}`, assetVersion);
   } else if (clearAvatar) {
     config.avatar = "";
   } else if (!config.avatar && currentConfig?.avatar) {
