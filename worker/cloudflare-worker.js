@@ -12,16 +12,9 @@ function jsonResponse(request, env, data, status = 200) {
   });
 }
 
-function corsHeaders(request, env) {
-  const origin = request.headers.get("Origin") || "";
-  const allowedOrigins = (env.ALLOWED_ORIGINS || env.ALLOWED_ORIGIN || "*")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-  const allowsAny = allowedOrigins.includes("*");
-  const matchedOrigin = allowedOrigins.includes(origin);
+function corsHeaders() {
   return {
-    "access-control-allow-origin": allowsAny ? "*" : matchedOrigin ? origin : allowedOrigins[0] || "*",
+    "access-control-allow-origin": "*",
     "access-control-allow-methods": "POST, OPTIONS",
     "access-control-allow-headers": "content-type, authorization",
     "access-control-max-age": "86400",
