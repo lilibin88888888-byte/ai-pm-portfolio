@@ -105,6 +105,7 @@ textarea {
 .avatar-button,
 .brand-mark {
   display: grid;
+  position: relative;
   width: 38px;
   height: 38px;
   place-items: center;
@@ -121,13 +122,23 @@ textarea {
 }
 
 .avatar-button img {
+  position: absolute;
+  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
+  border-radius: inherit;
+  background: #ffffff;
   object-fit: cover;
+  object-position: center;
+  transform: scale(1.22);
+  transform-origin: center;
 }
 
 .avatar-fallback {
   display: grid;
+  position: relative;
+  z-index: 1;
   place-items: center;
 }
 
