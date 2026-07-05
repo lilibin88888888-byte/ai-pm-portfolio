@@ -321,6 +321,32 @@ function fileToDataUrl(file) {
   });
 }
 
+function loadImageFromDataUrl(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = dataUrl;
+  });
+}
+
+async function cropAvatarToSquare(file) {
+  const dataUrl = await fileToDataUrl(file);
+  const image = await loadImageFromDataUrl(dataUrl);
+  const sourceSize = Math.min(image.naturalWidth, image.naturalHeight);
+  const sourceX = Math.round((image.naturalWidth - sourceSize) / 2);
+  const sourceY = Math.round((image.naturalHeight - sourceSize) / 2);
+  const outputSize = 512;
+  const canvas = document.createElement("canvas");
+  canvas.width = outputSize;
+  canvas.height = outputSize;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, outputSize, outputSize);
+  context.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, outputSize, outputSize);
+  return canvas.toDataURL("image/png");
+}
+
 function renderAvatar(config) {
   document.querySelectorAll("#siteAvatar").forEach((img) => {
     img.src = config.avatar || "";
@@ -925,10 +951,10 @@ function bindCenterActions() {
   document.querySelector("[name='avatarFile']")?.addEventListener("change", async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const dataUrl = await fileToDataUrl(file);
+      const dataUrl = await cropAvatarToSquare(file);
       pendingAvatarFile = {
-        name: file.name || "avatar",
-        type: file.type || "image/jpeg",
+        name: "avatar.png",
+        type: "image/png",
         dataUrl,
       };
       avatarShouldClear = false;
