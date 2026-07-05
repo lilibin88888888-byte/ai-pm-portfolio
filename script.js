@@ -944,7 +944,8 @@ function bindCenterActions() {
     });
   }
   if (publishSecret) {
-    publishSecret.value = localStorage.getItem(PUBLISH_SECRET_KEY) || "";
+    publishSecret.value = localStorage.getItem(PUBLISH_SECRET_KEY) || CENTER_PASS;
+    localStorage.setItem(PUBLISH_SECRET_KEY, publishSecret.value.trim());
     publishSecret.addEventListener("input", () => {
       localStorage.setItem(PUBLISH_SECRET_KEY, publishSecret.value.trim());
     });
