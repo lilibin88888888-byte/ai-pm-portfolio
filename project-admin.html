@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>个人中心 | Product Portfolio</title>
-    <meta name="description" content="用于编辑个人 AI 产品经理作品集全部内容的配置中心。" />
+    <title>个人中心 | UI/UX Portfolio</title>
+    <meta name="description" content="用于编辑个人 UI/UX 设计师作品集全部内容的配置中心。" />
     <link rel="stylesheet" href="./style.css?v=20260705-vercel-publisher" />
   </head>
   <body class="admin-body">
@@ -12,7 +12,7 @@
       <div class="brand">
         <button class="avatar-button" type="button" id="avatarButton" aria-label="查看头像大图">
           <img id="siteAvatar" src="" alt="个人头像" />
-          <span class="avatar-fallback">PM</span>
+          <span class="avatar-fallback">UX</span>
         </button>
         <a href="./index.html"><span>个人中心</span></a>
       </div>
@@ -32,7 +32,7 @@
           <p class="eyebrow">Content Center</p>
           <h1>个人中心</h1>
           <p>
-            这里可以编辑展示页上的全部内容：首页定位、Agent 文案、项目案例、AI 产品能力、文章、联系方式。点击保存后会直接发布到 GitHub。
+            这里可以编辑展示页上的全部内容：首页定位、作品集助手文案、设计项目、UI/UX 能力、文章、联系方式。点击保存后会直接发布到 GitHub。
           </p>
         </div>
       </section>
@@ -109,30 +109,30 @@
 
           <section class="config-card" id="agentConfig">
             <p class="eyebrow">Hidden Module</p>
-            <h2>Agent 预留内容</h2>
-            <p class="form-hint">当前展示页已隐藏 Agent 模块，这里先保留配置，方便后续接入后恢复。</p>
+            <h2>作品集助手预留内容</h2>
+            <p class="form-hint">当前展示页已隐藏助手模块，这里先保留配置，方便后续接入后恢复。</p>
             <label>
-              Agent 区小标题
+              助手区小标题
               <input name="agentEyebrow" type="text" />
             </label>
             <label>
-              Agent 区标题
+              助手区标题
               <input name="agentTitle" type="text" />
             </label>
             <label>
-              Agent 区介绍
+              助手区介绍
               <textarea name="agentSummary"></textarea>
             </label>
             <label>
-              Agent 状态文案
+              助手状态文案
               <input name="agentStatus" type="text" />
             </label>
             <label>
-              Agent 欢迎语
+              助手欢迎语
               <textarea name="agentWelcome"></textarea>
             </label>
             <label>
-              Agent 推荐问题，每行一个
+              助手推荐问题，每行一个
               <textarea name="agentPrompts"></textarea>
             </label>
           </section>
@@ -165,7 +165,7 @@
 
           <section class="config-card" id="capabilityConfig">
             <p class="eyebrow">Skill Map</p>
-            <h2>产品能力结构</h2>
+            <h2>UI/UX 设计能力结构</h2>
             <label>
               能力区小标题
               <input name="capabilitiesEyebrow" type="text" />
@@ -188,23 +188,23 @@
           </section>
 
           <section class="config-card" id="thinkingConfig">
-            <p class="eyebrow">Product Notes</p>
-            <h2>产品思考</h2>
+            <p class="eyebrow">UX Design Notes</p>
+            <h2>UI/UX 设计思考</h2>
             <label>
-              产品思考小标题
+              设计思考小标题
               <input name="thinkingEyebrow" type="text" />
             </label>
             <label>
-              产品思考标题
+              设计思考标题
               <input name="thinkingTitle" type="text" />
             </label>
             <label>
-              产品思考介绍
+              设计思考介绍
               <textarea name="thinkingSummary"></textarea>
             </label>
             <div>
               <div class="repeater-heading">
-                <h3>产品思考</h3>
+                <h3>设计思考</h3>
                 <button class="secondary-button small" type="button" data-add="notes">添加文章</button>
               </div>
               <div class="repeater-list" id="notesEditor"></div>
@@ -254,6 +254,6 @@
       <a href="./index.html">返回首页</a>
     </footer>
 
-    <script src="./script.js?v=20260716-ui-resume"></script>
+    <script src="./script.js?v=20260716-ui-ux-all"></script>
   </body>
 </html>

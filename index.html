@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>个人产品作品集 | Product Portfolio</title>
+    <title>个人 UI/UX 作品集 | UI/UX Portfolio</title>
     <meta
       name="description"
-      content="面向产品经理面试的个人简历与项目作品集网站，展示项目案例、产品能力、思考文章与 AI Agent 入口。"
+      content="面向 UI/UX 设计师面试的个人简历与项目作品集网站，展示设计项目、体验能力、设计思考与作品集问答入口。"
     />
     <link rel="stylesheet" href="./style.css?v=20260705-vercel-publisher" />
   </head>
@@ -15,9 +15,9 @@
       <div class="brand">
         <button class="avatar-button" type="button" id="avatarButton" aria-label="查看头像大图">
           <img id="siteAvatar" src="" alt="个人头像" />
-          <span class="avatar-fallback">PM</span>
+          <span class="avatar-fallback">UX</span>
         </button>
-        <a href="#top" aria-label="返回首页"><span>Product Portfolio</span></a>
+        <a href="#top" aria-label="返回首页"><span>UI/UX Portfolio</span></a>
       </div>
       <button class="mobile-menu-button" type="button" id="mobileMenuButton" aria-expanded="false" aria-controls="mobileHeaderMenu" aria-label="打开菜单">
         <span></span>
@@ -29,10 +29,10 @@
           <a href="#resume">简历</a>
           <a href="#projects">项目</a>
           <a href="#capabilities">能力</a>
-          <a href="#thinking" hidden>思考</a>
+          <a href="#thinking">思考</a>
         </nav>
         <div class="header-actions">
-          <a class="header-action" href="#agent" hidden><span class="button-icon icon-spark"></span>AI Agent</a>
+          <a class="header-action" href="#agent" hidden><span class="button-icon icon-spark"></span>作品集助手</a>
           <button class="header-action secondary-header-action" type="button" id="openCenter">
             <span class="button-icon icon-user"></span>个人中心
           </button>
@@ -43,9 +43,9 @@
     <main id="top">
       <section class="hero section-band">
         <div class="hero-copy">
-          <h1 id="heroTitle">用项目、判断和复盘，展示我的产品能力。</h1>
+          <h1 id="heroTitle">用调研、交互和视觉落地，展示我的 UI/UX 设计能力。</h1>
           <p class="hero-summary" id="heroSummary">
-            这里会集中呈现我的项目经历、产品分析、能力结构和简历信息。面试官可以快速看到我如何定义问题、理解用户、拆解需求、推动落地并复盘迭代。
+            这里会集中呈现我的设计项目、体验分析、能力结构和简历信息。面试官可以快速看到我如何理解用户、拆解场景、设计交互、推动落地并复盘迭代。
           </p>
           <div class="hero-actions">
             <a class="primary-button" href="#projects" id="heroPrimary"><span class="button-icon icon-folder"></span>查看重点项目</a>
@@ -54,15 +54,15 @@
             </button>
           </div>
           <div class="signal-row" id="heroTags" aria-label="个人方向标签">
-            <span>AI 产品</span>
-            <span>B 端工具</span>
+            <span>UI/UX 设计</span>
+            <span>B 端体验</span>
             <span>用户研究</span>
             <span>数据分析</span>
           </div>
         </div>
 
         <div class="hero-visual" aria-label="作品集信息结构图">
-          <img src="./assets/product-portfolio-map.svg" alt="产品作品集信息结构图" />
+          <img src="./assets/product-portfolio-map.svg" alt="UI/UX 作品集信息结构图" />
         </div>
       </section>
 
@@ -83,18 +83,18 @@
           <p class="eyebrow" id="agentEyebrow">Agent Ready</p>
           <h2 id="agentTitle">预留一个大模型对话入口</h2>
           <p id="agentSummary">
-            后期可以接入你的个人 Agent，让面试官围绕项目、能力、经历进行问答。当前版本先保留前端交互和接入位置。
+            后期可以接入你的作品集助手，让面试官围绕设计项目、能力、经历进行问答。当前版本先保留前端交互和接入位置。
           </p>
         </div>
         <div class="agent-shell">
           <div class="agent-panel">
             <div class="agent-status">
               <span class="status-dot"></span>
-              <span id="agentStatus">个人简历 Agent · 待接入</span>
+              <span id="agentStatus">UI/UX 作品集助手 · 待接入</span>
             </div>
             <div class="chat-window" id="chatWindow" aria-live="polite">
               <div class="message assistant" id="agentWelcome">
-                你好，我是预留的个人作品集 Agent。后续我可以回答“你最有代表性的项目是什么？”、“你如何做需求优先级？”这类问题。
+                你好，我是预留的 UI/UX 作品集助手。后续我可以回答“你最有代表性的设计项目是什么？”、“你如何做用户研究？”这类问题。
               </div>
             </div>
             <form class="chat-form" id="chatForm">
@@ -102,14 +102,14 @@
               <input
                 id="chatInput"
                 type="text"
-                placeholder="试试：介绍一个最能体现产品能力的项目"
+                placeholder="试试：介绍一个最能体现 UI/UX 能力的项目"
                 autocomplete="off"
               />
               <button type="submit">发送</button>
             </form>
           </div>
           <div class="agent-prompts" id="agentPrompts" aria-label="推荐提问">
-            <button type="button" data-prompt="请用 60 秒介绍你的产品能力结构。">能力结构</button>
+            <button type="button" data-prompt="请用 60 秒介绍你的 UI/UX 能力结构。">能力结构</button>
             <button type="button" data-prompt="哪个项目最能体现你的用户洞察？">用户洞察</button>
             <button type="button" data-prompt="你如何判断一个需求是否值得做？">需求判断</button>
             <button type="button" data-prompt="请总结你的项目复盘方法。">项目复盘</button>
@@ -121,7 +121,7 @@
         <div class="section-heading">
           <p class="eyebrow" id="projectsEyebrow">Case Studies</p>
           <h2 id="projectsTitle">项目作品集</h2>
-          <p id="projectsSummary">每个项目都围绕“问题、用户、方案、结果、复盘”展开，让面试官看到你的产品思考链路。</p>
+          <p id="projectsSummary">每个项目都围绕“问题、用户、交互、视觉、落地、复盘”展开，让面试官看到你的设计思考链路。</p>
         </div>
         <div class="project-toolbar" id="projectToolbar"></div>
         <div class="project-grid" id="projectGrid"></div>
@@ -129,25 +129,25 @@
 
       <section id="capabilities" class="capabilities section-band">
         <div class="section-heading">
-          <p class="eyebrow" id="capabilitiesEyebrow">Product Skill Map</p>
-          <h2 id="capabilitiesTitle">产品能力结构</h2>
+          <p class="eyebrow" id="capabilitiesEyebrow">UI/UX Skill Map</p>
+          <h2 id="capabilitiesTitle">UI/UX 设计能力结构</h2>
           <p id="capabilitiesSummary">把能力拆成面试官能判断的具体行为，而不是停留在抽象评价。</p>
         </div>
         <div class="capability-grid" id="capabilityGrid"></div>
       </section>
 
-      <section id="thinking" class="thinking section-band" hidden>
+      <section id="thinking" class="thinking section-band">
         <div class="section-heading">
-          <p class="eyebrow" id="thinkingEyebrow">Product Notes</p>
-          <h2 id="thinkingTitle">产品思考</h2>
-          <p id="thinkingSummary">后续可以放 3-5 篇高质量产品拆解或项目复盘，展示你持续思考的能力。</p>
+          <p class="eyebrow" id="thinkingEyebrow">UX Design Notes</p>
+          <h2 id="thinkingTitle">UI/UX 设计思考</h2>
+          <p id="thinkingSummary">后续可以放 3-5 篇高质量体验拆解或设计复盘，展示你持续思考的能力。</p>
         </div>
         <div class="note-list" id="noteList"></div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <span>© 2026 Product Portfolio</span>
+      <span>© 2026 UI/UX Portfolio</span>
       <button class="link-button" type="button" id="footerCenterButton">个人中心</button>
     </footer>
 
@@ -175,6 +175,6 @@
       <img id="imageDialogImg" src="" alt="大图预览" />
     </dialog>
 
-    <script src="./script.js?v=20260716-ui-resume"></script>
+    <script src="./script.js?v=20260716-ui-ux-all"></script>
   </body>
 </html>
